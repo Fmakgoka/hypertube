@@ -1,0 +1,40 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+header{
+    background-color: gray; 
+    margin: auto --16px;
+    padding: 16px 32px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.3);
+}
+
+header h1{
+    color: whitesmoke;
+    font-family: 'Mclaren', cursive;
+    font-weight: 200;
+}
+
+header input{
+    
+}
+
+
+.register-form{
+    width: 100%;
+    max-width: 350px;
+    padding: 15px;
+    margin: auto;
+    height: 100%;
+    color: darkred;
+    background-position:100px;
+    
+};
+
+header{
+    background-color: yellow;
+    margin: auto --16px;
+    padding: 16px 32px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.3);
+}
