@@ -12,25 +12,22 @@ router.get('/', function (req, res) {
 router.post('/', async function (req, res) {
     var email = req.body.email;
     if (!email) {
-        res.status("401");
-        res.end();
+        res.status(401).send({
+            message: "email does not exist",
+            accessToken: null
+        });
+        res.end()
     }
     else {
         emailExist = false;
         try {
-            console.log('in try me jjiu')
             var check = await sql.checkEmailExists(email);
-            console.log(check)
             check.forEach(element => {
-                console.log('in check')
                 if (email == element.email) {
-                    console.log('elementemail')
                     emailExist = true;
                 }
             });
-            console.log(emailExist)
             if (emailExist == true) {
-                console.log('in true')
                 var token = crypto.randomBytes(64).toString('base64');
                  await sql.updateToken(token, email);
                 var transporter = nodemailer.createTransport({
@@ -59,12 +56,26 @@ router.post('/', async function (req, res) {
                 transporter.sendMail(mailOptions, function (error, info) {
                     if (error) {
                         console.log("email doesn't exists");
-                        console.log(error);
-                    } else {
+                        res.status(401).send({
+                            message: "user does not exist",
+                            accessToken: null
+                        });
+                        res.end();
+                     } else {
                         console.log('Email sent: ' + info.response);
+                        res.status(200).send({
+                            message: "check your email",
+                            accessToken: null
+                        });
 
                     }
                 })
+            }else{
+                res.status(401).send({
+                    message: "email not exist",
+                    accessToken: null
+                });
+                res.end()
             }
         } catch (error) {
             console.log("error register ", error.message);

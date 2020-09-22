@@ -46,27 +46,27 @@ function Resetpassword(props) {
     }
     return (
        
-        <section id="cover" class="min-vh-100">
+        <section id="cover" className="min-vh-100">
             <div id="cover-caption">
-                <div class="container">
-                    <div class="row text-white">
-                        <div class="col-xl-5 col-lg-6 col-md-8 col-sm-10 mx-auto text-center form p-4">
-                            <h1 class="display-4 py-2 text-truncate">Hypertube</h1>
+                <div className="container">
+                    <div className="row text-white">
+                        <div className="col-xl-5 col-lg-6 col-md-8 col-sm-10 mx-auto text-center form p-4">
+                            <h1 className="display-4 py-2 text-truncate">Hypertube</h1>
                             <p>you can change password</p>
-                            <div class="px-2">
-                                <form onSubmit={submit} class="justify-content-center">
-                                    <div class="form-group">
-                                        <label class="sr-only">Password</label>
+                            <div className="px-2">
+                                <form onSubmit={submit} className="justify-content-center">
+                                    <div className="form-group">
+                                        <label className="sr-only">Password</label>
                                         <Input type="password" name="password" value={user.password}
                                             onChange={handleChange} placeholder="Password" />
                                     </div>
-                                    <div class="form-group">
-                                        <label class="sr-only">Password</label>
+                                    <div className="form-group">
+                                        <label className="sr-only">Password</label>
                                         <Input type="password" name="confirm" value={user.confirm}
                                             onChange={handleChange} placeholder="confirm" />
 
                                     </div>
-                                    <button type="submit" class="btn btn-light">Reset</button>
+                                    <button type="submit" className="btn btn-light">Reset</button>
                                 </form>
 
                             </div>

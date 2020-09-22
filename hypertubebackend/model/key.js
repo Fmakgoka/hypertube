@@ -14,6 +14,8 @@ module.exports = {
 
     session:{
         cookieKey:'Felecialovefoodanddance'
+    },
+    jwt: {
+        secret:"idontevenknowwhy"
     }
-
 }

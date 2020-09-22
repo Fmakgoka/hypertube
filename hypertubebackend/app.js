@@ -4,62 +4,70 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors');
-var cookieSession = require('cookie-session');
+//var cookieSession = require('cookie-session');
 var session = require('express-session');
+var bodyParser = require('body-parser');
 const passportSetup = require('./model/passport-setup');
 
 const keys = require('./model/key');
 const passport = require('passport');
-
-
 var registerRouter = require('./routes/register');
 var loginRouter = require('./routes/login');
 var authRouter = require('./routes/auth');
 var homepageRouter = require('./routes/homepage');
 var forgotpasswordRouter = require('./routes/forgotpassword');
 var activateaccRouter = require('./routes/activateAccount')
-var passwordRouter = require('./routes/password');
+//var passwordRouter = require('./routes/password');
+var profileRouter = require('./routes/profile')
 const key = require('./model/key');
 const con = require('./model/connect');
 
 var app = express();
 
-app.use(cookieSession({
-  maxAge:24*60*60*1000,
-  keys: [key.session.cookieKey]
-}))
+//app.set('trust proxy', 1) // trust first proxy
 
-const sessionFunction = function(req, res, next){
-  if (req.session.login){
-    console.log('Welcome back,' + req.session.username+ '!');
-    next()
-  }else{
-    console.log('please login to view this page');
-    res.redirect("http://localhost:3000/login");
-  }
-}
+// app.use(cookieSession({
+//   maxAge:24*60*60*1000,
+//   keys: [key.session.cookieKey]
+// }))
+
 
 //initialize passport
 app.use(passport.initialize())
-app.use(passport.session());
+//app.use(passport.session());
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-app.use(cors());
-
+app.use(cors({credentials: true}));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(session({
+  secret: 'secret',
+  resave: false,
+  saveUninitialized: false,
+  cookie:{maxAge:60000, secure: false}
+}));
 
+app.use(function(req, res, next) {
+  res.header(
+    "Access-Control-Allow-Headers",
+    "x-access-token, Origin, Content-Type, Accept"
+  );
+  next();
+});
 app.use('/register', registerRouter)
 app.use('/login', loginRouter);
 app.use('/auth', authRouter);
-app.use('/homepage',sessionFunction, homepageRouter);
+app.use('/homepage',homepageRouter);
 app.use('/forgotpassword', forgotpasswordRouter);
 app.use('/activateAccount', activateaccRouter);
-app.use('/password', passwordRouter);
+//app.use('/password', passwordRouter);
+app.use('/profile', profileRouter)
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

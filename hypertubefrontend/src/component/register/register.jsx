@@ -1,96 +1,179 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from "react";
 import './register.css';
-import {Input} from 'reactstrap'
-import {useHistory} from 'react-router-dom';
+import Form from "react-validation/build/form";
+import Input from "react-validation/build/input";
+import CheckButton from "react-validation/build/button";
+import { isEmail } from "validator";
 
+import AuthService from "../../services/auth.service";
 
-function Register(props) {
-    const [state, setState] = useState({
-        username: "",
-        firstname: "",
-        lastname:"",
-        email: "",
-        password: "",
-        confirm: ""
-    })
-    
-    const history = useHistory();
-    const submit = e =>{
-        e.preventDefault()
-        console.log(state)
-        fetch('http://localhost:9000/register', {
-            method: 'POST',
-            body: JSON.stringify(state),
-            headers: {'Content-Type': 'application/json'},
-        })
-          .then(res => {
-                console.log(`req successful ${res.status}`);
-                if (res.status === 401)
-                    history.push('/register')
-                else if (res.status === 200)
-                    history.push('/login')
-
-            })
-         .catch(error => console.log(error))
-
-    }  
-    const handleChange = (e) =>{
-        e.persist();
-        debugger
-        setState({
-            ...state,
-            [e.target.name]: e.target.value,
-        });
+const required = (value) => {
+    if (!value) {
+        return (
+            <div className="alert alert-danger" role="alert">
+                This field is required!
+            </div>
+        );
     }
+};
+
+const validEmail = (value) => {
+    if (!isEmail(value)) {
+        return (
+            <div className="alert alert-danger" role="alert">
+                This is not a valid email.
+            </div>
+        );
+    }
+};
+
+const vname = (value) => {
+    if (value.length < 3 || value.length > 20) {
+        return (
+            <div className="alert alert-danger" role="alert">
+                The username must be between 3 and 20 characters.
+            </div>
+        );
+    }
+};
+
+
+
+const Register = (props) => {
+    const form = useRef();
+    const checkBtn = useRef();
+
+    const [username, setUsername] = useState("");
+    const [firstname, setFirstname] = useState("");
+    const [lastname, setLastname] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirm, setConfirm] = useState("");
+    const [successful, setSuccessful] = useState(false);
+    const [message, setMessage] = useState("");
+
+    const onChangeUsername = (e) => {
+        const username = e.target.value;
+        setUsername(username);
+    };
+
+    const onChangeFirstname = (e) => {
+        const firstname = e.target.value;
+        setFirstname(firstname);
+    };
+
+    const onChangeLastname = (e) => {
+        const lastname = e.target.value;
+        setLastname(lastname);
+    };
+
+    const onChangeEmail = (e) => {
+        const email = e.target.value;
+        setEmail(email);
+    };
+
+    const onChangePassword = (e) => {
+        const password = e.target.value;
+        setPassword(password);
+    };
+
+    const onChangeConfirm = (e) => {
+        const confirm = e.target.value;
+        setConfirm(confirm);
+    };
+
+    const submit = e => {
+        e.preventDefault();
+
+        setMessage("");
+        setSuccessful(false);
+
+        form.current.validateAll();
+
+        if (checkBtn.current.context._errors.length === 0) {
+            AuthService.register(username, firstname, lastname, email, password, confirm).then(
+                (response) => {
+                    setMessage(response.data.message);
+                    setSuccessful(true);
+                },
+                (error) => {
+                    const resMessage =
+                        (error.response &&
+                            error.response.data &&
+                            error.response.data.message) ||
+                        error.message ||
+                        error.toString();
+
+                    setMessage(resMessage);
+                    setSuccessful(false);
+                }
+            );
+        }
+    }
+
     return (
         <section id="cover" className="min-vh-100">
-        <div id="cover-caption">
-            <div className="container">
-                <div className="row text-white">
-                    <div className="col-xl-5 col-lg-6 col-md-8 col-sm-10 mx-auto text-center form p-4">
-                        <h1 className="display-4 py-2 text-truncate">Hypertube</h1>
-                        <div className="px-2">
-                            <form onSubmit={submit} className="justify-content-center">
-                            <div className="form-group">
-                                    <label className="sr-only">UserName</label>
-                                    <Input  type="text" name="username" value={state.username} 
-                                    onChange= {handleChange} placeholder= "UserName"/>
-                                </div>
-                            <div className="form-group">
-                                    <label className="sr-only">FirstName</label>
-                                    <Input type="text" name="firstname" value={state.firstname}
-                                    onChange={handleChange} placeholder= "FirstName"/>
-                                </div>
-                            <div className="form-group">
-                                    <label className="sr-only">LastName</label>
-                                    <Input type="text" name="lastname" value={state.lastname} 
-                                         onChange={handleChange} placeholder= "LastName"/>
-                                </div>
-                                <div className="form-group">
-                                    <label className="sr-only">Email</label>
-                                    <Input type="text" name="email" value={state.email}
-                                        onChange={handleChange} placeholder="email" />
-                                </div>
-                                <div className="form-group">
-                                    <label className="sr-only">Password</label>
-                                    <Input type="password" name="password" value={state.password} 
-                                   onChange={handleChange} placeholder= "Password"/>
-                                </div>
-                                <div className="form-group">
-                                    <label className="sr-only">Confirm</label>
-                                    <Input type="password" name="confirm" value={state.confirm} 
-                                     onChange={handleChange} placeholder= "Confirm"/>
-                                </div>
-                                <button type="submit" className="btn btn-light">sign_up</button>
-                            </form>
+            <div id="cover-caption">
+                <div className="container">
+                    <div className="row text-white">
+                        <div className="col-xl-5 col-lg-6 col-md-8 col-sm-10 mx-auto text-center form p-4">
+                            <h1 className="display-4 py-2 text-truncate">Hypertube</h1>
+                            <div className="px-2">
+                                <Form onSubmit={submit} className="justify-content-center" ref={form}>
+                                    <div className="form-group">
+                                        <label className="sr-only">UserName</label>
+                                        <Input type="text" name="username" value={username}
+                                            onChange={onChangeUsername} validations={[required, vname]} placeholder="UserName" />
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="sr-only">FirstName</label>
+                                        <Input type="text" name="firstname" value={firstname}
+                                            onChange={onChangeFirstname} validations={[required, vname]} placeholder="FirstName" />
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="sr-only">LastName</label>
+                                        <Input type="text" name="lastname" value={lastname}
+                                            onChange={onChangeLastname} validations={[required, vname]} placeholder="LastName" />
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="sr-only">Email</label>
+                                        <Input type="text" name="email" value={email}
+                                            onChange={onChangeEmail} validations={[required, validEmail]} placeholder="email" />
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="sr-only">Password</label>
+                                        <Input type="password" value={password}
+                                            onChange={onChangePassword} validations={[required]}
+                                            placeholder="Password" />
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="sr-only">Confirm</label>
+                                        <Input type="password" name="confirm" value={confirm}
+                                            onChange={onChangeConfirm} validations={[required]}
+                                            placeholder="Confirm" />
+                                    </div>
+                                    <button type="submit" className="btn btn-light">sign_up</button>
+
+                                    {message && (
+                                        <div className="form-group">
+                                            <div
+                                                className={successful ? "alert alert-success" : "alert alert-danger"}
+                                                role="alert"
+                                            >
+                                                {message}
+                                            </div>
+                                        </div>
+                                    )}
+                                    <CheckButton style={{ display: "none" }} ref={checkBtn} />
+                                </Form>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    );    
+    );
 }
 
 export default Register;

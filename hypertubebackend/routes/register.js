@@ -18,38 +18,29 @@ router.post('/', async function (req, res) {
     var email = req.body.email;
     var password = req.body.password;
     var confirm = req.body.confirm;
-    console.log(username)
     if (!username || !firstname || !lastname || !email || !password || !confirm) {
-        res.send(401);
-        res.end();
+        res.status(401).send({
+            message: "user does not exist",
+            accessToken: null
+        });
+        res.end()
     } else {
-        console.log('in post')
         emailExists = false;
         usernameExists = false;
         try {
-            console.log('in try')
             var check = await sql.checkEmailAndUserNameExists(username, email);
-            console.log(check)
             check.forEach(element => {
-                console.log('in check')
                 if (email == element.email) {
-                    console.log('elementemail')
                     emailExists = true;
                 }
-                console.log(element.username)
-                console.log(username)
                 if (username == element.username) {
-                    console.log('username')
                     usernameExists = true;
                 }
             });
             if (usernameExists == false && emailExists == false) {
-                console.log('in if')
                 if (password == confirm) {
-                    console.log('in password')
                     let newPassword = await bcrypt.hash(password, saltRound);
                     var token = crypto.randomBytes(64).toString('base64');
-                    console.log(token)
                      await sql.insertUserD(username, firstname, lastname, email, newPassword, token);
                     var transporter = nodemailer.createTransport({
                         service: 'gmail',
@@ -76,23 +67,31 @@ router.post('/', async function (req, res) {
                     transporter.sendMail(mailOptions, function (error, info) {
                         if (error) {
                             console.log("email doesn't exists");
-                            res.send(401);
+                            res.status(401).send({
+                                message: "Email does not exist",
+                                accessToken: null
+                            });
                             res.end()
                         } else {
 
                             console.log('Email sent: ' + info.response);
                         }
                     })
-                    console.log('inserted')
-                    res.send(200);
+                    res.send({message:"User was registered successfully"});
                     res.end()
 
                 }
+            }else{
+                res.status(401).send({
+                    message: "username/email already exist",
+                    accessToken: null
+                });
+                res.end()
             }
 
         } catch (error) {
             console.log("error register ", error.message);
-            res.redirect('/');
+            res.status(500).send({ message: err.message });
         }
     }
 })
