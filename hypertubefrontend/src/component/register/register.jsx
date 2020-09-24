@@ -35,9 +35,7 @@ const vname = (value) => {
             </div>
         );
     }
-};
-
-
+}
 
 const Register = (props) => {
     const form = useRef();

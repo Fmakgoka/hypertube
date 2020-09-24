@@ -18,7 +18,7 @@ function Resetpassword(props) {
     const submit = e => {
         e.preventDefault()
 
-        fetch('http://localhost:9000/password', {
+        fetch('http://localhost:9000/resetpassword', {
             method: 'POST',
             body: JSON.stringify(user),
             headers: { 'content-Type': 'application/json' }

@@ -1,5 +1,7 @@
 var con = require('../model/connect');
 const { query } = require('express');
+var bcrypt = require('bcrypt')
+
 
 let dbquery = {};
 
@@ -129,10 +131,10 @@ dbquery.activateAccount = function (token) {
 
 }
 
-dbquery.updateUserPassword = function (password, username) {
+dbquery.updateUserPassword = function (password, user_id) {
 	return new Promise((resolve, reject) => {
-		con.query(`UPDATE user SET password=?, token='' WHERE username=?`,
-			[password, username],
+		con.query(`UPDATE user SET password=?, token='' WHERE user_id=?`,
+			[password, user_id],
 			(error, result) => {
 				if (error) {
 					return reject(error);
@@ -161,7 +163,7 @@ dbquery.updateFirstname = function (firstname, user_id) {
 
 dbquery.updateLastName = function (lastname, user_id) {
 	return new Promise((resolve, reject) => {
-		con.query(`UPDATE user SET lastname=? WHERE lastname=?`,
+		con.query(`UPDATE user SET lastname=? WHERE user_id=?`,
 			[lastname, user_id],
 			(error, result) => {
 				if (error) {
@@ -204,6 +206,33 @@ dbquery.updateEmail = function (email, user_id) {
 
 }
 
+dbquery.comparePassword = async function(oldpassword, dbpassword){
+	return new Promise((resolve, reject) => {
+		bcrypt.compare(oldpassword, dbpassword,
+			(error, result) => {
+				if (error) {
+					return reject(error);
+				}
+				console.log(result);
+				return resolve(result);
+			})
+	})
+} 
 
+dbquery.UpdateImage =async function(image, user_id){
+	return new Promise((resolve, reject) => {
+		con.query(`UPDATE user SET image=? WHERE user_id=?`,
+			[image, user_id],
+			(error, result) => {
+				if (error) {
+					return reject(error);
+				}
+				console.log(result);
+				return resolve(result);
+			})
+	})
+
+
+}
 
 module.exports = dbquery;

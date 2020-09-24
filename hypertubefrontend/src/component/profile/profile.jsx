@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './profile.css';
-import { Input } from 'reactstrap'
+import {Input } from 'reactstrap'
 import { useHistory } from 'react-router-dom';
 import AuthService from "../../services/auth.service";
 
@@ -14,13 +14,15 @@ console.log(currentUser);
         lastname:"",
         username:"",
         email:"",
-        password: "",
+        oldpassword:"",
+        newpassword: "",
         confirm: ""
     })
 
     const history = useHistory();
     const submit = e => {
         e.preventDefault()
+        console.log(currentUser)
 
         fetch('http://localhost:9000/profile', {
             method: 'POST',
@@ -61,9 +63,11 @@ console.log(currentUser);
                <h6>Upload a different photo...</h6>
                <input type="file" className="text-center center-block file-upload"/>                                                           
                <p>
-                   username: {currentUser.id}
-                   
-                </p>           
+                   username: {currentUser.username} 
+                </p> 
+                <p>
+                   email: {currentUser.email} 
+                </p>             
         </div>
             </div>
            <div className="col-md-5 border-right">
@@ -96,9 +100,13 @@ console.log(currentUser);
                             onChange={handleChange} placeholder="email" />                        
                         </div>
                         <div className="col-md-12">
-                            <label className="labels">Oldpassword</label>
-                            <Input type="password" name="password" value={user.password}
+                            <label className="labels">Changepassword</label>
+                            <Input type="password" name="oldpassword" value={user.oldpassword}
                             onChange={handleChange} placeholder="Oldpassword" />
+                            <Input type="password" name="newpassword" value={user.newpassword}
+                            onChange={handleChange} placeholder="NewPassword" />
+                            <Input type="password" name="confirm" value={user.confirm}
+                            onChange={handleChange} placeholder="ConfirmNewPassword" />
                         </div>
                      </div>
                      <div className="mt-5 text-center">

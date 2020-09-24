@@ -3,7 +3,6 @@ var router = express.Router();
 var sql = require('../query/query')
 var bcrypt = require('bcrypt')
 const key = require('../model/key')
-//var cookieSession = require('cookie-session');
 var jwt = require("jsonwebtoken");
 
 
@@ -28,7 +27,7 @@ router.post('/', async function (req, res) {
             });
             res.end()
         } else {
-            bcrypt.compare(password, check[0].password, function (err, result) {
+            await bcrypt.compare(password, check[0].password, function (err, result) {
                 if (result == true) {
                     var verify;
                     check.forEach(element => {
@@ -45,6 +44,8 @@ router.post('/', async function (req, res) {
                         
                         res.status(200).send({
                             id: check[0].user_id,
+                            firstname:check[0].firstname,
+                            lastname:check[0].lastname,
                             username: check[0].username,
                             email: check[0].email,
                             accessToken: token
