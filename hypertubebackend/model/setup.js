@@ -18,7 +18,8 @@ const usersql = `CREATE TABLE IF NOT EXISTS user(
     email VARCHAR(255),
     password VARCHAR(255),
     token VARCHAR(255),
-    verify VARCHAR(3)
+    verify VARCHAR(3),
+    image VARCHAR(255)
 )`
 
 const createDB = () => {

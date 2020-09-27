@@ -4,13 +4,16 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors');
-//var cookieSession = require('cookie-session');
 var session = require('express-session');
 var bodyParser = require('body-parser');
 const passportSetup = require('./model/passport-setup');
-
+var jsonwt = require("jsonwebtoken");
+const jwt = require('express-jwt');
 const keys = require('./model/key');
 const passport = require('passport');
+
+
+
 var registerRouter = require('./routes/register');
 var loginRouter = require('./routes/login');
 var authRouter = require('./routes/auth');
@@ -46,12 +49,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(session({
-  secret: 'secret',
-  resave: false,
-  saveUninitialized: false,
-  cookie:{maxAge:60000, secure: false}
-}));
+
 
 app.use(function(req, res, next) {
   res.header(

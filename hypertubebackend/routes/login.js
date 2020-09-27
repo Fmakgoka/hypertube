@@ -48,6 +48,7 @@ router.post('/', async function (req, res) {
                             lastname:check[0].lastname,
                             username: check[0].username,
                             email: check[0].email,
+                            Image: check[0].image,
                             accessToken: token
                         });
                         res.end()

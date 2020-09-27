@@ -1,7 +1,7 @@
 import React ,{useState, useEffect}from 'react';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import Login from './component/login/login';
-import Home from './component/homepage';
+import Home from './component/movie/homepage';
 import Forgotpassword from './component/resetpasswort/forgotpassword';
 import Register from './component/register/register';
 import Resetpassword from './component/password/password';
@@ -29,7 +29,7 @@ function App() {
         <Router>
           <nav className="navbar navbar-expand navbar-dark bg-dark">
             <div className="navbar-nav mr-auto">
-                <h1>HyperTube</h1>
+                <h1  className="text-danger" >HyperTube</h1>
               {currentUser && (
                 <li className="nav-item">
                   <Link to={"/homepage"} className="nav-link">
@@ -41,8 +41,6 @@ function App() {
     
             {currentUser ? (
               <div className="navbar-nav ml-auto">
-                <input className="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"/>
-                <button className="btn btn-outline-success my-2 my-sm-0" type="submit">search</button>
                 <li className="nav-item">
                   <Link to={"/profile"} className="nav-link">
                     Profile

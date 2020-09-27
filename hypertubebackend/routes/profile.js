@@ -7,12 +7,16 @@ const saltRound = 10;
 const mail = require('../middleware/emailmassege');
 const multer = require('multer');
 var upload = require('../middleware/imageupload');
+var user_id 
 
 
 router.get('/', [authJWT.verifyToken], function (req, res) {
     console.log(req.userId)
+    user_id = req.userId
+
     res.redirect("http://localhost:3000/profile");
 })
+
 
 router.post('/', [authJWT.verifyToken], async function (req, res) {
     console.log('here', authJWT)
@@ -23,30 +27,14 @@ router.post('/', [authJWT.verifyToken], async function (req, res) {
     var oldpassword = req.body.oldpassword;
     var newpassword = req.body.newpassword;
     var confirm = req.body.confirm;
-    var user_id = req.userId
+    user_id = req.userId
     console.log('lets see', req.userId)
     try {
-        upload(req, res, async (err) => {
-
-            if (err instanceof multer.MulterError) {
-                res.render('/profile', {
-                    error: {
-                        message: "An error occured uploading your images`",
-                    }
-                })
-            } else if (err) {
-                res.send(err);
-            } else {
-                var image = req.file;
-                console.log(image);
-                await sql.UpdateImage(image.filename, user_id)
-            }
-        })
-
         console.log('first')
         if (firstname != '') {
-            console.log('firstname')
-            await sql.updateFirstname(firstname, user_id);
+            console.log('firstname', firstname)
+            var check = await sql.updateFirstname(firstname, user_id);
+            console.log(check[0])
             res.send(200)
         }
         if (lastname != '') {
@@ -115,4 +103,24 @@ router.post('/', [authJWT.verifyToken], async function (req, res) {
     }
 })
 
+router.post('/images',  [authJWT.verifyToken], async function (req, res) {
+    upload(req, res, async (err) => {
+        user_id = req.userId;
+        if (err instanceof multer.MulterError) {
+            res.status(500).send({
+                message: "An error occured uploading your images`",
+
+            })
+        } else if (err) {
+            res.status(500).send(err);
+        } else {
+            var image = req.file;
+            console.log("in the image ",user_id);
+            await sql.UpdateImage(image.filename, user_id)
+            res.status(200).send({
+                message: "image uploaded successfully"
+            })
+        }
+    })
+})
 module.exports = router;

@@ -79,7 +79,9 @@ const Register = (props) => {
         const confirm = e.target.value;
         setConfirm(confirm);
     };
-
+    const resetInputField = () => {
+        setConfirm("")
+      }
     const submit = e => {
         e.preventDefault();
 
@@ -93,6 +95,7 @@ const Register = (props) => {
                 (response) => {
                     setMessage(response.data.message);
                     setSuccessful(true);
+                    resetInputField();
                 },
                 (error) => {
                     const resMessage =
