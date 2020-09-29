@@ -1,48 +1,41 @@
-
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import'./homepage.css'
+import './homepage.css';
 import AuthService from "../../services/auth.service";
 import Movie from './movie';
-import Search from './search'
+import Search from './search';
 
-const initialState = {
-  loading: true,
-  movies: [],
-  errorMessage: null
-};
 
-const reducer = (state, action) => {
-  switch (action.type) {
-    case "SEARCH_MOVIES_REQUEST":
-      return {
-        ...state,
-        loading: true,
-        errorMessage: null
-      };
-    case "SEARCH_MOVIES_SUCCESS":
-      return {
-        ...state,
-        loading: false,
-        movies: action.payload
-      };
-    case "SEARCH_MOVIES_FAILURE":
-      return {
-        ...state,
-        loading: false,
-        errorMessage: action.error
-      };
-    default:
-      return state;
-  }
-};
 
 const Home = () => {
   const currentUser = AuthService.getCurrentUser();
-  const [state, dispatch] = useReducer(reducer, initialState);
-  // console.log(state)
+  const [movies, setMovies] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [errorMessage, setErrorMessage] = useState(null);
+
+
   useEffect(() => {
-    axios.get('http://localhost:9000/homepage', {
+    
+    axios.get(`http://localhost:9000/homepage`, {
+      headers: {
+        'content-Type': 'application/json',
+        'x-access-token': `${currentUser.accessToken}`
+      }
+    })
+      .then(res => {
+        let results = JSON.parse(res.data.data)
+        console.log(results);
+        setMovies(results['data'].movies)
+        setLoading(false)
+      })
+      .catch(error => console.log(error))
+
+  }, [])
+
+  const search = searchValue => {
+    setLoading(true);
+    setErrorMessage(null);
+    axios.get(`http://localhost:9000/search/?q=${searchValue}`, {
       headers: {
         'content-Type': 'application/json',
         'x-access-token': `${currentUser.accessToken}`
@@ -50,33 +43,43 @@ const Home = () => {
     })
       .then(res => {
         let movies = JSON.parse(res.data.data)
-        // console.log( movies['data'].movies)
-        dispatch({
-          type: "SEARCH_MOVIES_SUCCESS",
-          payload: movies['data'].movies
-        })
-      })
-      .then(jsonResponse => {
+        if (movies.status === "ok") {
+          console.log("STATUS")
+          if (movies['data'].movie_count !== 0) {
+            setMovies(movies['data'].movies)
+            setLoading(false)
 
-      })
-    // .catch(error => console.log(error))
-  }, []);
+          } else {
+            console.log("(action.error")
+            setLoading(true);
+            setErrorMessage('movies not found');
 
-  const { movies, errorMessage, loading } = state;
-  console.log(movies)
+          }
+
+        } else {
+          setLoading(true);
+          setErrorMessage('movies not fount');
+        }
+      })
+  }
+
+  console.log('two', movies);
   return (
     <div className="Home">
-      <Search/>
+      {/* <Search search={search} /> */}
       <div className="movies">
-        {loading && !errorMessage ? (
-         <span>loading...</span>
-         ) : errorMessage ? (
-          <div className="errorMessage">{errorMessage}</div>
-        ) : (
+        {loading &&
+          <span>loading...</span>
+        }
+        {errorMessage &&
+          <span>{errorMessage}</span>
+        }
+        {movies &&
           movies.map((movie, index) => (
             <Movie key={`${index}-${movie.Title}`} movie={movie} />
           ))
-        )}
+        }
+
       </div>
     </div>
   )

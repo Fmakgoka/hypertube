@@ -13,7 +13,6 @@ const keys = require('./model/key');
 const passport = require('passport');
 
 
-
 var registerRouter = require('./routes/register');
 var loginRouter = require('./routes/login');
 var authRouter = require('./routes/auth');
@@ -22,8 +21,11 @@ var forgotpasswordRouter = require('./routes/forgotpassword');
 var activateaccRouter = require('./routes/activateAccount')
 var profileRouter = require('./routes/profile')
 var resetpasswordRouter = require('./routes/resetpassword')
+var searchRouter = require('./routes/search')
+
 const key = require('./model/key');
 const con = require('./model/connect');
+
 
 var app = express();
 
@@ -66,6 +68,7 @@ app.use('/forgotpassword', forgotpasswordRouter);
 app.use('/activateAccount', activateaccRouter);
 app.use('/profile', profileRouter);
 app.use('/resetpassword', resetpasswordRouter);
+app.use('/search', searchRouter);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
