@@ -5,11 +5,43 @@ const { authJWT } = require('../middleware')
 
 
 router.get('/', [authJWT.verifyToken], function (req, res) {
-    console.log('lets', req.query)
-    console.log('not you')
+
+
     var searchvalue = req.query.q;
-    console.log('searchvalue',searchvalue);
-    axios({
+    if (searchvalue.length !== 0) {
+        axios({
+            "method": "GET",
+            "url": `https://yts.mx/api/v2/list_movies.json?query_term=${searchvalue}`,
+            "mode": "no-cors",
+            "headers": {
+                "content-type": "application/json",
+            }
+        })
+            .then((response) => {
+                console.log('response from search', response.data)
+                res.json({ data: JSON.stringify(response.data) });
+            })
+            .catch((error) => {
+                console.log(error)
+            })
+        console.log('in search')
+        axios({
+            "method": "GET",
+            "url": `https://yts.mx/api/v2/list_movies.json?query_term=${searchvalue}`,
+            "mode": "no-cors",
+            "headers": {
+                "content-type": "application/json",
+            }
+        })
+            .then((response) => {
+               console.log('response from search',response.data)
+              res.json({ data: JSON.stringify(response.data) });
+            })
+            .catch((error) => {
+                console.log(error)
+            })
+        console.log('in search')
+ axios({
         "method": "GET",
         "url": `https://yts.mx/api/v2/list_movies.json?query_term=${searchvalue}`,
         "mode": "no-cors",
@@ -25,6 +57,8 @@ router.get('/', [authJWT.verifyToken], function (req, res) {
             console.log(error)
         })
     console.log('in search')
+    
+    }
 
 })
 
