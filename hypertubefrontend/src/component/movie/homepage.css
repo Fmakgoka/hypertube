@@ -37,10 +37,17 @@
     padding: 8px;
     margin: 0 10px 30px 10px;
   }
+  .sorts{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: left;
+   
+  }
   
   .movie {
     padding: 5px 25px 10px 25px;
-    max-width: 25%;
+    max-width: 20%;
   }
   
   .errorMessage {
@@ -62,8 +69,8 @@
   input[type="submit"] {
     padding: 5px;
     background-color: transparent;
-    color: black;
-    border: 1px solid black;
+    color: rgb(161, 15, 15);
+    border: 1px solid red;
     width: 80px;
     margin-left: 5px;
     cursor: pointer;
@@ -71,7 +78,7 @@
   
   
   input[type="submit"]:hover {
-    background-color: #282c34;
+    background-color:rgb(161, 15, 15);;
     color: antiquewhite;
   }
   

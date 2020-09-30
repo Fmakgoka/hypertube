@@ -7,6 +7,9 @@ import Register from './component/register/register';
 import Resetpassword from './component/password/password';
 import Editprofile from './component/profile/profile';
 import AuthService from "./services/auth.service";
+import Search from './component/movie/search';
+import Searching from './component/movie/searching'
+import Dropdown from './component/movie/drop';
 
 
 function App() {
@@ -41,6 +44,11 @@ function App() {
     
             {currentUser ? (
               <div className="navbar-nav ml-auto">
+                <li className="nav-item">
+                  <Link to={"/searching"} className="nav-link">
+                    Search
+                  </Link>
+                </li>
                 <li className="nav-item">
                   <Link to={"/profile"} className="nav-link">
                     Profile
@@ -77,6 +85,8 @@ function App() {
               <Route exact path="/forgotpassword" component={Forgotpassword } />
               <Route path="/password" component={Resetpassword} />
               <Route path="/profile" component={ Editprofile} />
+              <Route path="/searching" component={Searching} />
+              <Route exact path="/drop" component={Dropdown} />
             </Switch>
           </div>
         </Router>

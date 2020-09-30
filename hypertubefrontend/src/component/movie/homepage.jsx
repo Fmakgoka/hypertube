@@ -3,77 +3,60 @@ import axios from 'axios';
 import './homepage.css';
 import AuthService from "../../services/auth.service";
 import Movie from './movie';
-import Search from './search';
+import InfiniteScroll from 'react-infinite-scroller'
+import Dropdown from './drop';
 
 const Home = () => {
   const currentUser = AuthService.getCurrentUser();
   const [movies, setMovies] = useState([])
-  const [loading, setLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState(null);
-
-
-  useEffect(() => {  
-    axios.get(`http://localhost:9000/homepage`, {
+  const [hasMoreItems, setHasMoreItems] = useState(true);
+  
+  const loadUserList = (page) => {
+    console.log(page)
+    axios.get(`http://localhost:9000/homepage?page=${page}`, {
       headers: {
         'content-Type': 'application/json',
         'x-access-token': `${currentUser.accessToken}`
       }
     })
-      .then(res => {
-        setLoading(false)
+      .then((res) => {
         let results = JSON.parse(res.data.data)
-        console.log(`Useeffect results`);
-        setMovies(results['data'].movies)
-      })
-      .catch(error => console.log(error))
-
-  }, [])
-
-  const search = searchValue => {
-    // setLoading(true);
-    setErrorMessage(null);
-    axios.get(`http://localhost:9000/search/?q=${searchValue}`, {
-      headers: {
-        'content-Type': 'application/json',
-        'x-access-token': `${currentUser.accessToken}`
-      }
-    })
-      .then(res => {
-        let movies = JSON.parse(res.data.data)
-        if (movies.status === "ok") {
-          if (movies['data'].movie_count !== 0) {
-            console.log("RETURNING MOVIES")
-            setLoading(false)
-            setMovies(movies['data'].movies)
-          } else {
-            console.log("(action.error")
-            setLoading(false);
-            setErrorMessage('movies not found');
-            setMovies([])
-          }
+        const newList = movies.concat(results['data'].movies);
+        setMovies(newList);
+        console.log(`resDATA`, results['data'])
+        if((results['data'].movie_count/results['data'].limit) === page) {
+          setHasMoreItems(false);
         } else {
-          setLoading(false);
-          setErrorMessage('Something went wrong');
-          setMovies([])
+          setHasMoreItems(true);
         }
+      })
+      .catch((err) => {
+        console.log(err);
       })
   }
 
-  console.log('two', movies);
+  
   return (
     <div className="Home">
-      <Search search={search} />
+      <Dropdown />
       <div className="movies">
-      {loading && !errorMessage ? (
-         <span>loading...</span>
-         ) : errorMessage ? (
+      <InfiniteScroll
+          className="movies"
+          threshold={250}
+          pageStart={0}
+          loadMore={loadUserList}
+          hasMore={hasMoreItems}
+          loader={<div key={0} className="text-center">loading data ...</div>}>
+           {errorMessage ? (
           <div className="errorMessage">{errorMessage}</div>
         ) : (
           movies.map((movie, index) => (
-            <Movie key={`${index}-${movie.title}`} movie={movie} />
+            <Movie key={`${index}-${movie.Title}`} movie={movie} />
           ))
         )}
-
+        </InfiniteScroll>
+        {hasMoreItems ? "" : <div className="text-center">no data anymore ...</div> }
       </div>
     </div>
   )

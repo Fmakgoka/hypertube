@@ -98,21 +98,7 @@ const He = () => {
           payload: movies['data'].movies
         })
       })
-    // .then(jsonResponse => {
-    //   console.log('lets search', jsonResponse);
-    //   if (jsonResponse === "True") {
-    //     dispatch({
-    //       type: "SEARCH_MOVIES_SUCCESS",
-    //       payload: jsonResponse.Search
-    //     });
-    //   } else {
-    //     dispatch({
-    //       type: "SEARCH_MOVIES_FAILURE",
-    //       error: jsonResponse.Error
-    //     });
-    //   }
-    // });
-
+    
   }
 
   const { movies, errorMessage, loading } = state;

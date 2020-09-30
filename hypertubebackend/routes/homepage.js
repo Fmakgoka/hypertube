@@ -16,23 +16,33 @@ const authCheck = function(req, res, next){
 
 router.get('/' ,[authJWT.verifyToken],function(req, res){
     // console.log('in movi');
-    // var page = req.query.page
-    // console.log('pagepage',page)
-    // let url;
-    // if (page !=null && page > 1){
-    //   url = `https://yts.mx/api/v2/list_movies.json?page=${page}`
-    // }else{
-    //   url=`https://yts.mx/api/v2/list_movies.json`
-    // }
+    var page = req.query.page
+    console.log('pagepage',page)
+    let sort;
+    console.log(req.query)
+    if (!req.query.items){
+      sort="download_count"
+     
+    }else{
+        sort = req.query.items
+       
+      console.log(sort,'sort_by');
+    }
+    console.log(sort,'sort_by in');
+
+    
     axios({
         "method":"GET",
-        "url":`https://yts.mx/api/v2/list_movies.json`,
+        "url":`https://yts.mx/api/v2/list_movies.json?page=${page}&limit=15`,
         "mode":"no-cors",
         "headers":{
         "content-type":"application/json"
-        }
+        },"params":{
+          "sort_by":sort,
+          }
         })
         .then((response)=>{
+
           res.json({ data: JSON.stringify(response.data) });
         })
         .catch((error)=>{
