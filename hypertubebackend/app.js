@@ -22,6 +22,7 @@ var activateaccRouter = require('./routes/activateAccount')
 var profileRouter = require('./routes/profile')
 var resetpasswordRouter = require('./routes/resetpassword')
 var searchRouter = require('./routes/search')
+var detailRouter = require('./routes/movieDetails')
 
 const key = require('./model/key');
 const con = require('./model/connect');
@@ -69,6 +70,8 @@ app.use('/activateAccount', activateaccRouter);
 app.use('/profile', profileRouter);
 app.use('/resetpassword', resetpasswordRouter);
 app.use('/search', searchRouter);
+app.use('/movieDetails', detailRouter);
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

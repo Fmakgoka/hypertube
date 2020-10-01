@@ -33,7 +33,7 @@ router.get('/' ,[authJWT.verifyToken],function(req, res){
     
     axios({
         "method":"GET",
-        "url":`https://yts.mx/api/v2/list_movies.json?page=${page}&limit=15`,
+        "url":`https://yts.mx/api/v2/list_movies.json?page=${page}&limit=20`,
         "mode":"no-cors",
         "headers":{
         "content-type":"application/json"
