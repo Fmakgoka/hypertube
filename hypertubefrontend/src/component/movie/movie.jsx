@@ -1,14 +1,19 @@
 import React from "react";
 
+
 const DEFAULT_PLACEHOLDER_IMAGE =
-  "https://placehold.it/198x264&text=Image+Not+Found";
+  "https://m.media-amazon.com/images/M/MV5BMTczNTI2ODUwOF5BMl5BanBnXkFtZTcwMTU0NTIzMw@@._V1_SX300.jpg";
 
 
 const Movie = ({movie,openPopup}) => {
   const poster =
     movie.Poster === "N/A" ? DEFAULT_PLACEHOLDER_IMAGE : movie.large_cover_image;
   return (
-    <div className="movie" onClick={() => openPopup(movie.id)}>
+    <div className="movie" onClick={(e) => {
+      openPopup(movie.id)
+    console.log('clicked');
+    }
+      }>
         <img
           // key={props.key}
           width="150"

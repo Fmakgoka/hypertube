@@ -5,7 +5,7 @@ const { authJWT } = require('../middleware')
 
 router.get('/', [authJWT.verifyToken], function (req, res) {
     var id = req.query.id;
-   
+   console.log(id);
     axios({
         "method": "GET",
         "url": `https://yts.mx/api/v2/movie_details.json?movie_id=${id}`,
